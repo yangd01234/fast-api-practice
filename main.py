@@ -8,6 +8,7 @@ Check the docs with swagger: go to url localhost:8000/docs
 from fastapi import FastAPI
 from typing import Optional
 from pydantic import BaseModel
+import uvicorn
 
 
 # create instance of fast api
@@ -71,3 +72,7 @@ Basic route to create a stock
 @app.post('/stock')
 def create_stock(request: Stock):
     return {'data': f'Created stock with ticker {request.ticker}'}
+
+# create a main to run app using main.py in terminal instead of uvicorn command
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="127.0.0.1", port=9000)
