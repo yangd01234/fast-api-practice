@@ -7,7 +7,7 @@ Check the docs with swagger: go to url localhost:8000/docs
 
 from fastapi import FastAPI
 from typing import Optional
-
+from pydantic import BaseModel
 
 
 # create instance of fast api
@@ -55,3 +55,19 @@ Fastapi will know if you are using a path param or query param
 @app.get('/stock/{id}/notes')
 def notes(id, limit=10):
     return {'data': {'1', '2'}}
+
+'''
+Here we created a basic Stock model
+You can use the swagger docs to test your models
+'''
+class Stock(BaseModel):
+    ticker: str
+    description: str
+    date_ipo: Optional[bool]
+
+'''
+Basic route to create a stock
+'''
+@app.post('/stock')
+def create_stock(request: Stock):
+    return {'data': f'Created stock with ticker {request.ticker}'}
