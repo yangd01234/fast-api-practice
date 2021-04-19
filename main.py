@@ -2,22 +2,39 @@ from fastapi import FastAPI
 
 
 
-# step 1: create instance of fast api
+# create instance of fast api
 app = FastAPI()
 
 '''
-step 2: create a function for fast api
+Create a function for fast api
 @app: path operation decorator
 .get(): operation
 ('/'): path
 '''
 @app.get('/')
 def index():
-    return 'hello'
+    return {'data':'stocks'}
 
-# step 3: start the server using uvicorn main:app --reload and go to localhost:8000
+'''
+fast API works top down, so if you put /stock/unlisted after
+/stock/{id} it won't work.  This is becasue since {id} is dynamically
+populated, it won't reach /stock/unlisted path
+'''
+@app.get('/stock/unlisted')
+def unlisted():
+    return {'data': 'unlisted stocks'}
 
-# step 4: create another route
-@app.get('/about')
-def about():
-    return {'data':{'about page'}}
+# start the server using uvicorn main:app --reload and go to localhost:8000
+
+'''
+Create a dynamic path by using {}
+You can define the type by passing the param as id: int
+
+'''
+@app.get('/stock/{id}')
+def show(id: int):
+    return {'data': id}
+
+@app.get('/stock/{id}/notes')
+def notes(id):
+    return {'data': {'1', '2'}}
