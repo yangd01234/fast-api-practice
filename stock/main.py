@@ -27,6 +27,25 @@ def create(request: schemas.Stock, db : Session =  Depends(get_db)):
     db.refresh(new_stock)
     return new_stock
 
+@app.delete('/stock/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def destroy(id, db: Session = Depends(get_db)):
+    stock = db.query(models.Stock).filter(models.Stock.id == id)
+    if not stock.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Stock with id {id} not found")
+    stock.delete(synchronize_session=False)
+    db.commit()
+    return 'deleted'
+
+@app.put('/stock/{id}', status_code=status.HTTP_202_ACCEPTED)
+def update(id, request: schemas.Stock, db: Session = Depends(get_db)):
+    stock = db.query(models.Stock).filter(models.Stock.id == id)
+    if not stock.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Stock with id {id} not found")
+    # note the dict(), forces a dictionary type
+    stock.update(dict(request))
+    db.commit()
+    return 'updated'
+
 @app.get('/stock')
 def all(db : Session =  Depends(get_db)):
     stocks = db.query(models.Stock).all()
