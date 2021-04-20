@@ -25,3 +25,14 @@ def create(request: schemas.Stock, db : Session =  Depends(get_db)):
     db.commit()
     db.refresh(new_stock)
     return new_stock
+
+@app.get('/stock')
+def all(db : Session =  Depends(get_db)):
+    stocks = db.query(models.Stock).all()
+    return stocks
+
+@app.get('/stock/{id}')
+def show(id, db: Session =  Depends(get_db)):
+    # NOTE: There is a HUGE delay if you don't put .first()
+    stock = db.query(models.Stock).filter(models.Stock.id == id).first()
+    return stock
