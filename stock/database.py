@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 SQLACHEMY_DATABASE_URL = 'sqlite:///./stock.db'
 
 # create engine
-engine = create_engine(SQLACHEMY_DATABASE_URL, connect_args={"check_same_thrread": False})
+engine = create_engine(SQLACHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 
 # create session maker
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False,)
