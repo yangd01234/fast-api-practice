@@ -3,18 +3,22 @@ from .. import schemas, database, models
 from sqlalchemy.orm import Session
 from typing import List 
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/Stock",
+    tags=['Stocks']
+)
+
 get_db = database.get_db
 
 # input each route
-@router.get('/stock', response_model=List[schemas.ShowStock], tags=['stocks'])
+@router.get('/', response_model=List[schemas.ShowStock])
 def all(db : Session =  Depends(get_db)):
     stocks = db.query(models.Stock).all()
     return stocks
 
 
 # use status to auto create the status codes
-@router.post('/stock', status_code=status.HTTP_201_CREATED, tags=['stocks'])
+@router.post('/', status_code=status.HTTP_201_CREATED)
 # converts session into pydantic
 def create(request: schemas.Stock, db: Session =  Depends(get_db)):
     new_stock = models.Stock(ticker=request.ticker, description=request.description, user_id=1) # user id hard coded as 1 for now
@@ -27,7 +31,7 @@ def create(request: schemas.Stock, db: Session =  Depends(get_db)):
 
 
 
-@router.delete('/stock/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['stocks'])
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def destroy(id, db: Session = Depends(get_db)):
     stock = db.query(models.Stock).filter(models.Stock.id == id)
     if not stock.first():
@@ -36,7 +40,7 @@ def destroy(id, db: Session = Depends(get_db)):
     db.commit()
     return 'deleted'
 
-@router.put('/stock/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['stocks'])
+@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED)
 def update(id, request: schemas.Stock, db: Session = Depends(get_db)):
     stock = db.query(models.Stock).filter(models.Stock.id == id)
     if not stock.first():
@@ -48,7 +52,7 @@ def update(id, request: schemas.Stock, db: Session = Depends(get_db)):
 
 
 
-@router.get('/stock/{id}', status_code=200, response_model=schemas.ShowStock, tags=['stocks'])
+@router.get('/{id}', status_code=200, response_model=schemas.ShowStock)
 def show(id, db: Session =  Depends(get_db)):
     # NOTE: There is a HUGE delay if you don't put .first()
     stock = db.query(models.Stock).filter(models.Stock.id == id).first()
