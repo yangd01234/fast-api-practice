@@ -18,7 +18,7 @@ def get_db():
         db.close()
 
 # use status to auto create the status codes
-@app.post('/stock', status_code=status.HTTP_201_CREATED)
+@app.post('/stock', status_code=status.HTTP_201_CREATED, tags=['stocks'])
 # converts session into pydantic
 def create(request: schemas.Stock, db: Session =  Depends(get_db)):
     new_stock = models.Stock(ticker=request.ticker, description=request.description)
@@ -29,7 +29,7 @@ def create(request: schemas.Stock, db: Session =  Depends(get_db)):
     db.refresh(new_stock)
     return new_stock
 
-@app.delete('/stock/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@app.delete('/stock/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['stocks'])
 def destroy(id, db: Session = Depends(get_db)):
     stock = db.query(models.Stock).filter(models.Stock.id == id)
     if not stock.first():
@@ -38,7 +38,7 @@ def destroy(id, db: Session = Depends(get_db)):
     db.commit()
     return 'deleted'
 
-@app.put('/stock/{id}', status_code=status.HTTP_202_ACCEPTED)
+@app.put('/stock/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['stocks'])
 def update(id, request: schemas.Stock, db: Session = Depends(get_db)):
     stock = db.query(models.Stock).filter(models.Stock.id == id)
     if not stock.first():
@@ -48,12 +48,12 @@ def update(id, request: schemas.Stock, db: Session = Depends(get_db)):
     db.commit()
     return 'updated'
 
-@app.get('/stock', response_model=List[schemas.ShowStock])
+@app.get('/stock', response_model=List[schemas.ShowStock], tags=['stocks'])
 def all(db : Session =  Depends(get_db)):
     stocks = db.query(models.Stock).all()
     return stocks
 
-@app.get('/stock/{id}', status_code=200, response_model=schemas.ShowStock)
+@app.get('/stock/{id}', status_code=200, response_model=schemas.ShowStock, tags=['stocks'])
 def show(id, response: Response, db: Session =  Depends(get_db)):
     # NOTE: There is a HUGE delay if you don't put .first()
     stock = db.query(models.Stock).filter(models.Stock.id == id).first()
@@ -68,7 +68,7 @@ def show(id, response: Response, db: Session =  Depends(get_db)):
 
 
 # create users
-@app.post('/user', response_model=schemas.ShowUser)
+@app.post('/user', response_model=schemas.ShowUser, tags=['users'])
 def create_user(request: schemas.User, db: Session =  Depends(get_db)):
     new_user = models.User(name=request.name, email=request.email, password=Hash.bcrypt(request.password))
     db.add(new_user)
@@ -77,7 +77,7 @@ def create_user(request: schemas.User, db: Session =  Depends(get_db)):
     return new_user
 
 # get user without password
-@app.get('/user/{id}', response_model=schemas.ShowUser)
+@app.get('/user/{id}', response_model=schemas.ShowUser, tags=['users'])
 def get_user(id: int, db: Session =  Depends(get_db)):
     # NOTE: There is a HUGE delay if you don't put .first()
     user = db.query(models.User).filter(models.User.id == id).first()
