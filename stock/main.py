@@ -19,7 +19,7 @@ def get_db():
 # use status to auto create the status codes
 @app.post('/stock', status_code=status.HTTP_201_CREATED)
 # converts session into pydantic
-def create(request: schemas.Stock, db : Session =  Depends(get_db)):
+def create(request: schemas.Stock, db: Session =  Depends(get_db)):
     new_stock = models.Stock(ticker=request.ticker, description=request.description)
 
     # add and commit new stock using the prior model
@@ -64,3 +64,13 @@ def show(id, response: Response, db: Session =  Depends(get_db)):
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {'detail': f"stock with id {id} is not avaialble"}
     return stock
+
+
+# create users
+@app.post('/user')
+def create_user(request: schemas.User, db: Session =  Depends(get_db)):
+    new_user = models.User(name=request.name, email=request.email, password=request.password)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
