@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import FastAPI, Depends, status, Response, HTTPException
 from . import schemas, models
 from .database import engine, SessionLocal
@@ -46,12 +47,12 @@ def update(id, request: schemas.Stock, db: Session = Depends(get_db)):
     db.commit()
     return 'updated'
 
-@app.get('/stock')
+@app.get('/stock', response_model=List[schemas.ShowStock])
 def all(db : Session =  Depends(get_db)):
     stocks = db.query(models.Stock).all()
     return stocks
 
-@app.get('/stock/{id}', status_code=200)
+@app.get('/stock/{id}', status_code=200, response_model=schemas.ShowStock)
 def show(id, response: Response, db: Session =  Depends(get_db)):
     # NOTE: There is a HUGE delay if you don't put .first()
     stock = db.query(models.Stock).filter(models.Stock.id == id).first()
