@@ -30,3 +30,7 @@ class ShowStock(Stock):
     # you need to set the ORM mode when using a db.  Otherwise you get a dict error
     class Config():
         orm_mode = True
+
+class Login(BaseModel):
+    username: str
+    password: str
