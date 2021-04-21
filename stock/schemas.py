@@ -26,7 +26,7 @@ class ShowUser(BaseModel):
 class ShowStock(Stock):
     ticker: str
     description: str
-    creator: ShowUser
+    owner: ShowUser
     # you need to set the ORM mode when using a db.  Otherwise you get a dict error
     class Config():
         orm_mode = True
