@@ -21,7 +21,7 @@ def get_db():
 @app.post('/stock', status_code=status.HTTP_201_CREATED, tags=['stocks'])
 # converts session into pydantic
 def create(request: schemas.Stock, db: Session =  Depends(get_db)):
-    new_stock = models.Stock(ticker=request.ticker, description=request.description)
+    new_stock = models.Stock(ticker=request.ticker, description=request.description, user_id=1) # user id hard coded as 1 for now
 
     # add and commit new stock using the prior model
     db.add(new_stock)
