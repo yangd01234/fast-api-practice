@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 # if you are using pydantic, you will need to extend BaseModel
 class StockBase(BaseModel):
     ticker: str
@@ -34,3 +34,11 @@ class ShowStock(Stock):
 class Login(BaseModel):
     username: str
     password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
